@@ -1,0 +1,38 @@
+data_directory = '/var/lib/postgresql/9.2/main'
+hba_file = '/etc/postgresql/9.2/main/pg_hba.conf'
+ident_file = '/etc/postgresql/9.2/main/pg_ident.conf'
+external_pid_file = '/var/run/postgresql/9.2-main.pid'
+
+port = 5432
+max_connections = 100
+unix_socket_directory = '/var/run/postgresql'
+shared_buffers = 24MB
+
+
+log_destination = 'stderr'
+#syslog_facility = 'LOCAL0'
+#syslog_ident = 'postgres'
+#client_min_messages = notice
+#log_min_messages = warning
+#log_min_error_statement = error
+log_min_duration_statement = 0
+log_checkpoints = on
+log_connections = on
+log_disconnections = on
+#log_duration = off
+#log_hostname = off
+log_line_prefix = '%t [%p]: [%l-1] user=%u,db=%d '
+log_lock_waits = on
+log_temp_files = 0
+#log_statement = 'none'			# none, ddl, mod, all
+log_timezone = 'localtime'
+
+lc_messages = 'en_US.UTF-8'
+lc_monetary = 'en_US.UTF-8'
+lc_numeric = 'en_US.UTF-8'
+lc_time = 'en_US.UTF-8'
+default_text_search_config = 'pg_catalog.english'
+
+
+# Add settings for extensions here
+shared_preload_libraries = 'pg_stat_statements'
