@@ -9,3 +9,5 @@ apt::source { 'pgdg':
 package { 'postgresql-9.2':
   require => Apt::Source['pgdg'],
 }
+
+class { 'my-hadoop': }
