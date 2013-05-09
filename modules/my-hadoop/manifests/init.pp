@@ -1,16 +1,33 @@
 class my-hadoop {
 
+  package { 'wget': }
+
+  define download ($uri, $timeout = 300) {
+    exec {
+      "download $uri":
+        command => "wget -q '$uri' -O $name",
+        path => ['/usr/bin'],
+        creates => $name,
+        timeout => $timeout,
+        require => Package[ "wget" ],
+    }
+  }
+
   package { 'openjdk-7-jdk': }
 
+  download { "/tmp/hadoop.deb":
+      uri => "http://www.bizdirusa.com/mirrors/apache/hadoop/common/hadoop-1.0.4/hadoop_1.0.4-1_$architecture.deb",
+  }
+
   package { 'hadoop':
-    source => '/vagrant/hadoop_1.0.4-1_x86_64.deb',
+    source => '/tmp/hadoop.deb',
     provider => 'dpkg',
-    require => Package['openjdk-7-jdk'],
+    require => [Package['openjdk-7-jdk'], Download['/tmp/hadoop.deb'], File['/usr/lib/jvm/java-6-sun']],
   }
 
   file { '/usr/lib/jvm/java-6-sun':
     ensure => link,
-    target => '/usr/lib/jvm/java-7-openjdk-amd64',
+    target => "/usr/lib/jvm/java-7-openjdk-$architecture",
     require => Package['openjdk-7-jdk'],
   }
 
@@ -24,20 +41,23 @@ class my-hadoop {
   file {
     '/etc/hadoop/core-site.xml':
       ensure => present,
+      require => Package['hadoop'],
       source => 'puppet:///modules/my-hadoop/core-site.xml';
 
     '/etc/hadoop/hdfs-site.xml':
       ensure => present,
+      require => Package['hadoop'],
       source => 'puppet:///modules/my-hadoop/hdfs-site.xml';
 
     '/etc/hadoop/mapred-site.xml':
       ensure => present,
+      require => Package['hadoop'],
       source => 'puppet:///modules/my-hadoop/mapred-site.xml';
   }
 
   exec { 'format_namenode':
     command => 'hadoop namenode -format',
-    path => ['/usr/bin'],
+    path => ['/bin', '/usr/bin'],
     creates => '/var/tmp/hadoop/dfs/name/current',
     user => 'hdfs',
     require => File['/etc/hadoop/hdfs-site.xml'],
@@ -45,6 +65,7 @@ class my-hadoop {
 
   service {
     ['hadoop-namenode', 'hadoop-datanode']:
+      require => [Package['hadoop'], File['/etc/hadoop/core-site.xml', '/etc/hadoop/hdfs-site.xml']],
       ensure => running;
   }
 
@@ -53,6 +74,7 @@ class my-hadoop {
 
   service {
     ['hadoop-jobtracker', 'hadoop-tasktracker']:
+      require => [Package['hadoop'], File['/etc/hadoop/core-site.xml', '/etc/hadoop/mapred-site.xml']],
       ensure => running;
   }
 }
