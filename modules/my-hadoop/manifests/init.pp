@@ -16,7 +16,7 @@ class my-hadoop {
   package { 'openjdk-7-jdk': }
 
   download { "/tmp/hadoop.deb":
-      uri => "http://www.bizdirusa.com/mirrors/apache/hadoop/common/hadoop-1.0.4/hadoop_1.0.4-1_$architecture.deb",
+      uri => "https://archive.apache.org/dist/hadoop/core/hadoop-1.0.4/hadoop_1.0.4-1_$architecture.deb",
   }
 
   package { 'hadoop':
