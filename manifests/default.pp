@@ -1,5 +1,7 @@
 Package { ensure => installed }
 
+Exec['apt_update'] -> Package <| |>
+
 apt::source { 'pgdg':
   location => "http://apt.postgresql.org/pub/repos/apt/",
   release => "$lsbdistcodename-pgdg",
