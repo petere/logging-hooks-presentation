@@ -19,3 +19,14 @@ package { 'unzip': }
 
 class { 'my-hadoop': }
 class { 'my-hadoop::flume': }
+class { 'my-hadoop::hbase': }
+
+# pointing to 127.0.1.1 breaks hbase
+host { "localhost":
+  ip => '127.0.0.1',
+  host_aliases => ["$hostname"],
+}
+
+host { "$hostname":
+  ensure => absent,
+}
