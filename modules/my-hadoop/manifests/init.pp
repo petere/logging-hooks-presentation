@@ -16,7 +16,7 @@ class my-hadoop {
   package { 'openjdk-7-jdk': }
 
   download { "/tmp/hadoop.deb":
-      uri => "https://archive.apache.org/dist/hadoop/core/hadoop-1.0.4/hadoop_1.0.4-1_$architecture.deb",
+      uri => "https://archive.apache.org/dist/hadoop/core/hadoop-1.0.4/hadoop_1.0.4-1_$hardwaremodel.deb",
   }
 
   package { 'hadoop':
@@ -31,11 +31,20 @@ class my-hadoop {
     require => Package['openjdk-7-jdk'],
   }
 
+  file { '/var/log/hadoop':
+    ensure => directory,
+    owner => root,
+    group => hadoop,
+    mode => 'ug=rwx,o=rx',
+    require => Package['hadoop'],
+  }
+
   file { '/var/log/hadoop/root':
     ensure => directory,
     owner => root,
     group => hadoop,
     mode => 'ug=rwx,o=rx',
+    require => Package['hadoop'],
   }
 
   file {
