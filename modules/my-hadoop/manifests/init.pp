@@ -63,18 +63,26 @@ class my-hadoop {
     require => File['/etc/hadoop/hdfs-site.xml'],
   }
 
-  service {
-    ['hadoop-namenode', 'hadoop-datanode']:
-      require => [Package['hadoop'], File['/etc/hadoop/core-site.xml', '/etc/hadoop/hdfs-site.xml']],
-      ensure => running;
+  service { 'hadoop-namenode':
+    require => [Package['hadoop'], File['/etc/hadoop/core-site.xml', '/etc/hadoop/hdfs-site.xml']],
+    hasstatus => false,
+    pattern => 'proc_namenode',
+    ensure => running,
+  }
+
+  service { 'hadoop-datanode':
+    require => [Package['hadoop'], File['/etc/hadoop/core-site.xml', '/etc/hadoop/hdfs-site.xml']],
+    hasstatus => false,
+    pattern => 'proc_datanode',
+    ensure => running,
   }
 
   #$ sudo -u hdfs hadoop fs -mkdir /mapred
   #$ sudo -u hdfs hadoop fs -chown mapred:hadoop /mapred
 
-  service {
-    ['hadoop-jobtracker', 'hadoop-tasktracker']:
-      require => [Package['hadoop'], File['/etc/hadoop/core-site.xml', '/etc/hadoop/mapred-site.xml']],
-      ensure => running;
-  }
+  #service {
+  #  ['hadoop-jobtracker', 'hadoop-tasktracker']:
+  #    require => [Package['hadoop'], File['/etc/hadoop/core-site.xml', '/etc/hadoop/mapred-site.xml']],
+  #    ensure => running;
+  #}
 }
