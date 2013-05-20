@@ -16,3 +16,4 @@ package { 'git': }
 package { 'unzip': }
 
 class { 'my-hadoop': }
+class { 'my-hadoop::flume': }
