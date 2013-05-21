@@ -12,9 +12,24 @@ package { ['postgresql-9.2', 'postgresql-server-dev-9.2', 'postgresql-contrib-9.
   require => Apt::Source['pgdg'],
 }
 
+file { '/etc/sysctl.d/30-postgresql-shm.conf':
+  ensure => present,
+  content => "\
+kernel.shmmax = 335544320
+",
+  notify => Exec['reload_sysctl'],
+}
+
+exec { 'reload_sysctl':
+  command => 'cat /etc/sysctl.d/*.conf /etc/sysctl.conf | sysctl -e -p -',
+  path => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'],
+  refreshonly => true,
+}
+
 package { 'build-essential': }
 package { 'curl': }
 package { 'git': }
+package { 'python-psycopg2': }
 package { 'unzip': }
 
 class { 'my-hadoop': }
@@ -29,4 +44,13 @@ host { "localhost":
 
 host { "$hostname":
   ensure => absent,
+}
+
+
+exec { "git clone git://github.com/mpihlak/pg_logforward.git":
+  path => ['/bin', '/usr/bin'],
+  user => 'vagrant',
+  cwd => '/home/vagrant',
+  creates => '/home/vagrant/pg_logforward',
+  provider => shell,
 }
