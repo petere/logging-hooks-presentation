@@ -15,14 +15,14 @@ class my-hadoop {
 
   package { 'openjdk-7-jdk': }
 
-  download { "/tmp/hadoop.deb":
+  download { "/var/tmp/hadoop.deb":
       uri => "https://archive.apache.org/dist/hadoop/core/hadoop-1.0.4/hadoop_1.0.4-1_$hardwaremodel.deb",
   }
 
   package { 'hadoop':
-    source => '/tmp/hadoop.deb',
+    source => '/var/tmp/hadoop.deb',
     provider => 'dpkg',
-    require => [Package['openjdk-7-jdk'], Download['/tmp/hadoop.deb'], File['/usr/lib/jvm/java-6-sun']],
+    require => [Package['openjdk-7-jdk'], Download['/var/tmp/hadoop.deb'], File['/usr/lib/jvm/java-6-sun']],
   }
 
   file { '/usr/lib/jvm/java-6-sun':
